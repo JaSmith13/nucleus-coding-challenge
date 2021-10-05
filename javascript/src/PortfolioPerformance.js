@@ -48,7 +48,6 @@ export function getDailyPortfolioValues() {
 
         //uses the unary operator to remove trailing zeros in totals
         const dailyPortfolioValue = +((currentPrice * currentBitcoinValue).toFixed(5))
-        console.log(dailyPortfolioValue)
         
         const formattedDate = currentDate.toISOString().substring(0,10)
 
