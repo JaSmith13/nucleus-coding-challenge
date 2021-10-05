@@ -17,14 +17,18 @@ const transactions = [
 
 export function getDailyPortfolioValues() {
 
-    //start date for reporting period, time set to end of day
     const portfolioValues = []
+
+    //start date for reporting period, time set to end of day
     const currentDate = new Date("September 1, 2021 23:59:59")
+
+    //number of days to produce daily values for 
+    const reportingPeriod = 7
 
     //reverse the prices array to account for multiple price changes in one day 
     const reversedPrices = prices.reverse()
 
-    for(let i = 0; i < 7; i++){
+    for(let i = 0; i < reportingPeriod; i++){
 
         //finds the price just before end of day on the current date
         const currentPriceIndex = reversedPrices.findIndex(price => price.effectiveDate < currentDate)
@@ -33,17 +37,22 @@ export function getDailyPortfolioValues() {
         //finds the relevant point in the transactions array and calculates the current value up to that point
         let currentTransactionIndex = transactions.findIndex(transaction => currentDate < transaction.effectiveDate)
 
+        //if condition is never met we use the whole array as the date must be passed the most recent entry in the array
         if(currentTransactionIndex < 0){
             currentTransactionIndex = transactions.length
         }
 
+        //creates a subarray containing all transactions up to the current date and totals the current Bitcoin value 
         const bitcoinTotalValues = transactions.slice(0, currentTransactionIndex)  
         const currentBitcoinValue = bitcoinTotalValues.reduce((previousValue, currentValue) => previousValue + currentValue.value, 0)
 
+        //uses the unary operator to remove trailing zeros in totals
         const dailyPortfolioValue = +((currentPrice * currentBitcoinValue).toFixed(5))
         console.log(dailyPortfolioValue)
         
         const formattedDate = currentDate.toISOString().substring(0,10)
+
+
         portfolioValues.push({effectiveDate: formattedDate, value: dailyPortfolioValue})
         
         currentDate.setDate(currentDate.getDate() + 1)
@@ -51,5 +60,3 @@ export function getDailyPortfolioValues() {
 
     return portfolioValues;
 }
-
-
